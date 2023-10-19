@@ -48,6 +48,7 @@ async function run() {
     })
 
     // cart Datas
+
     app.get('/cart', async(req, res)=>{
       const products = CartProduct.find()
       const result = await products.toArray()
@@ -57,6 +58,13 @@ async function run() {
       const product = req.body;
       const result = await CartProduct.insertOne(product)
       res.send(result)
+  })
+  
+  app.delete('/cart/:id', async(req, res)=>{
+    const id = req.params.id
+    const cursor = {_id: new ObjectId(id)}
+    const result = await CartProduct.deleteOne(cursor)
+    res.send(result)
   })
     
 
