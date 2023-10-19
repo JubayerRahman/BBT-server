@@ -1,7 +1,7 @@
 const express = require("express")
 const cors  = require("cors")
 const port = process.env.PORT || 5000
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 require("dotenv").config()
 
@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const BBT = client.db("porductsDB").collection("products")
+    const CartProduct = client.db("porductsDB").collection("cart")
 
     app.get('/products', async(req, res)=>{
         const products = BBT.find()
@@ -33,11 +34,30 @@ async function run() {
         res.send(result)
     })
 
+    app.get ("/products/:id", async(req, res)=>{
+      const id = req.params.id
+      const filter = {_id: new ObjectId(id)}
+      const result = await BBT.findOne(filter)
+      res.send(result)
+    })
+
     app.post('/products',async(req, res)=>{
         const product = req.body;
         const result = await BBT.insertOne(product)
         res.send(result)
     })
+
+    // cart Datas
+    app.get('/cart', async(req, res)=>{
+      const products = CartProduct.find()
+      const result = await products.toArray()
+      res.send(result)
+  })
+    app.post('/cart',async(req, res)=>{
+      const product = req.body;
+      const result = await CartProduct.insertOne(product)
+      res.send(result)
+  })
     
 
     // Send a ping to confirm a successful connection
