@@ -47,6 +47,27 @@ async function run() {
         res.send(result)
     })
 
+    app.put("/products/:id", async(req, res)=>{
+      const id = req.params.id
+      const filter ={_id: new ObjectId(id)}
+      const option ={upsert:true}
+      const updateProduct = req.body;
+      const Product ={
+        $set:{
+          Image:updateProduct.Image,
+          brandName:updateProduct.brandName,
+          price:updateProduct.price,
+          price:updateProduct.price,
+          rating:updateProduct.rating,
+          shortDescription:updateProduct.shortDescription,
+          type:updateProduct.type,
+          name:updateProduct.name
+        }
+      }
+      const result = await BBT.updateOne(filter, Product, option)
+      res.send(result)
+    })
+
     // cart Datas
 
     app.get('/cart', async(req, res)=>{
