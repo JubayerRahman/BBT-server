@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.w7xbhfw.mongodb.net/?retryWrites=true&w=majority1`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.w7xbhfw.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -25,6 +25,19 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
+    const BBT = client.db("porductsDB").collection("products")
+
+    app.get('/products', async(req, res)=>{
+        const products = BBT.find()
+        const result = await products.toArray()
+        res.send(result)
+    })
+
+    app.post('/products',async(req, res)=>{
+        const product = req.body;
+        const result = await BBT.insertOne(product)
+        res.send(result)
+    })
     
 
     // Send a ping to confirm a successful connection
