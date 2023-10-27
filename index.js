@@ -23,13 +23,18 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const BBT = client.db("porductsDB").collection("products")
     const CartProduct = client.db("porductsDB").collection("cart")
 
     app.get('/products', async(req, res)=>{
-        const products = BBT.find()
+      let query ={}
+      console.log(req.query.brand);
+        if(req.query?.brand){
+          query ={brandName: req.query.brand}
+        }
+        const products = BBT.find(query)
         const result = await products.toArray()
         res.send(result)
     })
@@ -71,7 +76,11 @@ async function run() {
     // cart Datas
 
     app.get('/cart', async(req, res)=>{
-      const products = CartProduct.find()
+      let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+      const products = CartProduct.find(query)
       const result = await products.toArray()
       res.send(result)
   })
